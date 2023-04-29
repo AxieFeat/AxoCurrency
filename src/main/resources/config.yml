@@ -1,0 +1,228 @@
+# Пермишены:
+# axocurrency.help - помощь по плагину. (/bank help)
+#
+# axocurrency.bank.withdraw - снятие монет со счёта. (/bank withdraw <сумма>)
+# axocurrency.bank.deposit - пополнение счёта балансом. (/bank deposit <сумма>)
+
+# axocurrency.pay - перевод монет со своего баланса на чужой. (/pay <ник> <сумма>)
+# axocurrency.bank.pay - перевод монет со своего счёта на чужой. (/bank pay <ник> <сумма>)
+
+# axocurrency.bank.money.withdraw - снятие физической валюты со счёта (/bank money withdraw)
+# axocurrency.bank.money.deposit - пополнение физической валютой свой счёт. (/bank money deposit)
+
+# axocurrency.money.withdraw - снятие физической валюты с баланса. (/money withdraw)
+# axocurrency.money.deposit - пополнение физической валютой свой баланс. (/money deposit)
+#
+# axocurrency.bank.money - просмотр баланса счёта. (/bank money)
+# axocurrency.money - просмотр баланса. (/money)
+#
+#
+#
+# Админские команды:
+# axocurrency.admin.reload - перезагрузка плагина (/bank admin reload)
+# axocurrency.admin.help - админская помощь по плагину (/bank admin help)
+#
+# axocurrency.admin.bank.give - выдать монеты на счёт игрока. (/bank admin give <игрок> <сумма>)
+# axocurrency.admin.bank.take - забрать монеты со счёта игрока. (/bank admin take <игрок> <сумма>)
+# axocurrency.admin.bank.set - установить кол-во монет на счету игрока (/bank admin set <игрок> <сумма>)
+#
+# axocurrency.admin.money.give - выдать монеты на баланс игрока. (/money admin give <игрок> <сумма>)
+# axocurrency.admin.money.take - забрать монеты с баланса игрока. (/money admin take <игрок> <сумма>)
+# axocurrency.admin.money.set - установить кол-во монет на баланс игрока (/money admin set <игрок> <сумма>)
+#
+# axocurrency.admin.bank.money - сколько монет на счету игрока. (/bank admin money <игрок>)
+# axocurrency.admin.money.view - просмотр баланса игрока. (/money admin view <игрок>)
+
+# Плейсхолдеры:
+# %axocurrency_bank_money% - монет на счету игрока.
+# %axocurrency_money% - баланс игрока.
+# %axocurrency_taxes_withdraw% - процент налогов на снятие
+# %axocurrency_taxes_deposit% - процент налогов на пополнение
+# %axocurrency_interest_time% - через сколько времени игрок получит проценты.
+# %axocurrency_interest_amount% - предполагаемая сумма, которую игрок должен будет получить с процентов.
+
+version: "1.3"
+
+Plugin-prefix: "Economy >>"
+
+Item: # Настройка предмета валюты
+  ItemName: "none" # none - чтобы использовать ванильное название
+  Lore: "none"# none - чтобы убрать лор
+  CustomModelData: "none" # none - чтобы убрать CustomModelData
+  Material: GOLD_INGOT # Из-за бага spigot, чтобы работало забирание валюты, не используйте Lore, ItemName, CustomModelData
+
+General:
+  withdraw:
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP" # None - чтобы отключить
+    taxes: # Налоги. Указывать для всех групп на сервере! УКАЗЫВАТЬ НЕ ИМЕННО НАЗВАНИЕ ГРУППЫ, А КАКОЙ ПЕРМШЕН ДОЛЖЕН ИМЕТЬ ИГРОК! БЕЗ НАСЛЕДОВАНИЯ!
+      default: 5.0 # В процентах!
+      vip: 2.0
+    max-taxe: 1000 # Максимальная сумма налога
+
+    time: 10 # Через сколько секунд платёж будет отменён, если игрок не указал сумму.
+    exit: "exit" # Что нужно написать, чтобы отменить платёж.
+
+  deposit:
+    sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+    taxes:
+      default: 5.0
+      vip: 2.0
+    max-taxe: 1000
+
+    time: 10
+    exit: "exit"
+
+Max-Money: 100000 # Максимальная сумма, которую можно хранить на счету.
+
+Interest: # Настройка процентов
+  Enabled: true
+  Ignore-AFK-Players: false # Будет ли АФК игрок получать % ?
+  Money-Percent: 5.0 # Сколько % даётся
+  Send-Message: true # Отправлять игроку сообщение о получении процентов
+  Send-Null-Message: false # Отправлять игроку сообщение о получении нуля монет с процентов
+
+  # Задержка между выдачей процентов. Указывать в миллисекундах
+  Delay: 1200000
+
+  Max-Amount: 15000 # Максимальная сумма, которую можно получить с процентами.
+  Give-To-Offline-Players: false # Выдавать проценты оффлайн игрокам?
+  Time:
+    Second: "Секунда"
+    Seconds: "Секунд"
+    Minute: "Минута"
+    Minutes: "Минут"
+    Hour: "Час"
+    Hours: "Часов"
+    Day: "День"
+    Days: "Дней"
+    Interest-Time:
+      Only-Seconds: "%seconds% %seconds_placeholder%"
+      Only-Minutes: "%minutes% %minutes_placeholder%"
+      Only-Hours: "%hours% %hours_placeholder%"
+      Only-Days: "%days% %days_placeholder%"
+      Seconds-Minutes: "%seconds% %seconds_placeholder% и %minutes% %minutes_placeholder%"
+      Seconds-Hours: "%seconds% %seconds_placeholder% и %hours% %hours_placeholder%"
+      Seconds-Days: "%seconds% %seconds_placeholder% и %days% %days_placeholder%"
+      Seconds-Minutes-Hours: "%seconds% %seconds_placeholder%, %minutes% %minutes_placeholder% и %hours% %hours_placeholder%"
+      Seconds-Hours-Days: "%seconds% %seconds_placeholder%, %hours% %hours_placeholder% и %days% %days_placeholder%"
+      Seconds-Minutes-Days: "%seconds% %seconds_placeholder%, %minutes% %minutes_placeholder%и %days% %days_placeholder%"
+      Seconds-Minutes-Hours-Days: "%seconds% %seconds_placeholder%, %minutes% %minutes_placeholder%, %hours% %hours_placeholder% и %days% %days_placeholder%"
+      Minutes-Hours: "%minutes% %minutes_placeholder% и %hours% %hours_placeholder%"
+      Minutes-Days: "%minutes% %minutes_placeholder% и %days% %days_placeholder%"
+      Minutes-Hours-Days: "%minutes% %minutes_placeholder%, %hours% %hours_placeholder% и %days% %days_placeholder%"
+      Hours-Days: "%hours% %hours_placeholder% и %days% %days_placeholder%"
+
+Messages:
+  usages:
+    pay-usage: "%prefix% Использование: /%command% <ник> <сумма>"
+    bank-pay-usage: "%prefix% Использование: /%command% pay <ник> <сумма>"
+
+    bank-deposit-usage: "%prefix% Использование: /%command% deposit <сумма>"
+    bank-withdraw-usage: "%prefix% Использование: /%command% withdraw <сумма>"
+
+    bank-money-usage: "%prefix% Использование:\n/%command% money - Просмотр баланса на счету. \n/%command% money deposit - Внести сумму(физической валюты) на счёт\n/%command% money withdraw - Снять сумму(физической валюты) со счёта"
+
+    money-usage: "%prefix% Использование:\n/%command% - Просмотр баланса. \n/%command% deposit - Внести сумму(физической валюты) на баланс\n/%command% withdraw - Снять сумму(физической валюты) с баланса"
+
+  interest:
+    get-null: "%prefix% Вы не получили монет с процентов."
+    get: "%prefix% Вы получили %amount% монет на счёт с процентов!"
+
+  admin:
+    admin-help: |-
+      %prefix% Помощь по плагину:
+      > /bank reload - перезагрузка плагина;
+      > /bank admin give <ник> <сумма> - выдать количество монет на счёт игрока;
+      > /bank admin take <ник> <сумма> - забрать количество монет со счёта игрока;
+      > /bank admin set <ник> <сумма> - установить количество монет на счету игроку;
+      > /bank admin money <ник> - просмотр количества монет на счету игрока;
+      > /money admin give <ник> <сумма> - выдать количество монет на баланс игрока;
+      > /money admin take <ник> <сумма> - забрать количество монет с баланса игрока;
+      > /money admin set <ник> <сумма> - установить количество монет на баланс игрока;
+      > /money admin view <ник> - просмотр баланса игрока.
+    
+
+    bank-give: "%prefix% Вы выдали %amount% монет на счёт игроку %player%!"
+    bank-take: "%prefix% Вы забрали %amount% монет со счёта игрока %player%!"
+    bank-take-error: "%prefix% У игрока %player% нет столько монет на счету!"
+    bank-set: "%prefix% Вы установили баланс счёта игрока %player% на %amount%!"
+
+    money-give: "%prefix% Вы выдали %amount% монет на баланс игрока %player%!"
+    money-take: "%prefix% Вы забрали %amount% монет с баланса игрока %player%!"
+    money-take-error: "%prefix% У игрока %player% нет столько монет на балансе!"
+    money-set: "%prefix% Вы установили баланс игрока %player% на %amount%!"
+
+    bank-money: "%prefix% У игрока %player% %amount% монет на счету."
+    money: "%prefix% У игрока %player% %amount% монет на балансе."
+
+
+    usages:
+      unknown-command: "%prefix% Неизвестная команда! (Используйте \"/%command% help\" для помощи)"
+
+      bank-money-usage: "%prefix% Использование: /%command% admin money <игрок>"
+      bank-money-give: "%prefix% Использование: /%command% admin give <игрок> <сумма>"
+      bank-money-take: "%prefix% Использование: /%command% admin take <игрок> <сумма>"
+      bank-money-set: "%prefix% Использование: /%command% admin set <игрок> <сумма>"
+
+      money-usage: "%prefix% Использование: /%command% admin view <игрок>"
+      money-give: "%prefix% Использование: /%command% admin give <игрок> <сумма>"
+      money-take: "%prefix% Использование: /%command% admin take <игрок> <сумма>"
+      money-set: "%prefix% Использование: /%command% admin set <игрок> <сумма>"
+
+    reload: "%prefix% Плагин перезагружен!"
+
+  main:
+
+    player-help: |-
+      %prefix% Помощь по плагину:
+      > /bank money - монет на счету;
+      > /bank money withdraw - снять физ. валюту со счёта;
+      > /bank money deposit - вложить физ. валюту на счёт;
+      > /bank withdraw <сумма> - снять сумму монет со счёта;
+      > /bank deposit <сумма> - вложить сумму монет на счёт;
+      > /money withdraw - снять физ. валюту со счёта;
+      > /money deposit - вложить физ. валюту на счёт;
+      > /money - просмотр баланса;
+      > /pay <ник> <сумма> - перевести со своего баланса на чужой;
+      > /bank pay <ник> <сумма> - перевести со своего счёта на чужой.
+
+    deposit: "%prefix% Вы внесли %amount% монет на счёт! (Налог %taxe%)"
+    withdraw: "%prefix% Вы сняли %amount% монет со счёта! (Налог %taxe%)"
+    exit: "%prefix% Платёж отменён!"
+
+    pay: "%prefix% Вы перевели игроку %player% %amount% монет на баланс."
+    bank-pay: "%prefix% Вы перевели игроку %player% %amount% монет на счёт."
+
+    pay-receive: "%prefix% Вы получили %amount% монет на баланс от %player%!"
+    bank-pay-receive: "%prefix% Вы получили %amount% монет на счёт от %player%!"
+
+    money-withdraw: "%prefix% Вы сняли %amount% монет со счёта!"
+    money-deposit: "%prefix% Вы внесли %amount% монет на счёт!"
+
+    bank-money: "%prefix% У вас %amount% монет на счету!"
+    money: "%prefix% У вас %amount% монет на балансе!"
+
+    chat: "%prefix% Введите сумму в чат. Напишите \"exit\", чтобы отменить."
+
+  errors:
+    already: "%prefix% Вы уже делаете это действие!"
+    full: "%prefix% Недостаточно места в инвентаре!"
+
+    not-player: "%prefix% Вы не игрок!"
+    error-player: "%prefix% Игрок не найден!"
+    myself: "%prefix% Вы не можете перевести монеты самому себе!"
+
+    minus-amount: "%prefix% Число не должно быть отрицательным!"
+    amount-error-number: "%prefix% %amount% не число!"
+
+    max-limit-error: "%prefix% Превышен лимит монет на счету!"
+
+    min-limit-error: "%prefix% Недостаточно монет на счету!"
+    unenough-money: "%prefix% Недостаточно монет на балансе!"
+    unenough: "%prefix% Недостаточно монет!"
+
+    unknown-command: "%prefix% Неизвестная команда! (Используйте \"/%command% help\" для помощи)"
+    perm: "%prefix% Недостаточно прав (%permission%)"
+    what: "%prefix% Произошла неизвестная ошибка."
+
+

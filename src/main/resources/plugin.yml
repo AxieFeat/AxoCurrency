@@ -1,0 +1,24 @@
+name: AxoCurrency
+version: '${version}'
+main: me.axiefeat.axolotlstudio.Main
+api-version: 1.18
+load: POSTWORLD
+authors: [ AxieFeat ]
+softdepend:
+  - Essentials
+  - PlaceholderAPI
+  - CMI
+description: economy plugin
+website: https://vk.com/pingisjoin
+
+commands:
+  axocurrency:
+    aliases:
+      - ac
+      - acurrency
+      - currency
+      - bank
+  pay:
+    aliases:
+      - apay
+  money:
