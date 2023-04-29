@@ -51,7 +51,9 @@
 
   - axocurrency.admin.bank.money - сколько монет на счету игрока. (/bank admin money <игрок>)
   - axocurrency.admin.money.view - просмотр баланса игрока. (/money admin view <игрок>)
-
+#
+#
+#
 Плейсхолдеры:
   - %axocurrency_bank_money% - монет на счету игрока.
   - %axocurrency_money% - баланс игрока.
